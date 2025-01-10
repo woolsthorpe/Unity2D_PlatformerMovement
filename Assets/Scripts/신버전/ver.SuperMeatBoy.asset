@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a90bc751b3f7664c9ccaadf2272b616, type: 3}
+  m_Name: ver.SuperMeatBoy
+  m_EditorClassIdentifier: 
+  MaxSpeed: 17
+  MaxAcceleration: 30.5
+  MaxDecceleration: 60
+  MaxAirAcceleration: 43.6
+  MaxAirDecceleration: 9.6
+  MaxTurnSpeed: 80
+  MaxAirTurnSpeed: 43.6
+  UseAcceleration: 1
+  JumpHeight: 5
+  TimeToJumpApex: 0.45
+  JumpForce: 22.222221
+  FallGravityMult: 2
+  FastFallGravityMult: 2
+  MaxFallSpeed: 20
+  MaxFastFallSpeed: 20
+  GravityStrength: -49.382717
+  GravityScale: 1.6460906
+  JumpCutGravityMult: 4
+  JumpHangGravityMult: 0
+  JumpHangTimeThreshold: 0
+  JumpHangAcceleration: 1
+  WallJumpForce: {x: 20, y: 20}
+  WallJumpTime: 0.2
+  WallJumpTurnSpeed: 0.75
+  CoyoteTime: 0.2
+  InputBuffectTime: 0.2
+  DoubleJump: 0
+  SlideSpeed: 15
+  SlideSpeedChange: 50
+  DashCount: 0
+  DashSpeed: 0
+  DashEndSpeed: {x: 0, y: 0}
+  DashTurnSpeed: 0
+  DashSleepTime: 0
+  DashAttackTime: 0
+  DashEndTime: 0
+  DashRefillTime: 0
+  DashBufferTime: 0
