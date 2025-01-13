@@ -15,32 +15,31 @@ MonoBehaviour:
   MaxSpeed: 9.01
   MaxAcceleration: 55
   MaxDecceleration: 55
+  MaxTurnSpeed: 76
   MaxAirAcceleration: 60
   MaxAirDecceleration: 58
-  MaxTurnSpeed: 76
   MaxAirTurnSpeed: 75
   UseAcceleration: 1
   JumpHeight: 3.5
   TimeToJumpApex: 0.3
   JumpForce: 23.333332
-  FallGravityMult: 1.5
-  FastFallGravityMult: 2
+  FallGravityMultiplier: 1.5
+  FastFallGravityMultiplier: 2
   MaxFallSpeed: 25
   MaxFastFallSpeed: 25
   GravityStrength: -77.77777
   GravityScale: 7.9284167
-  JumpCutGravityMult: 2
-  JumpHangGravityMult: 0.5
+  JumpCutGravityMultiplier: 2
+  JumpHangGravityMultiplier: 0.5
   JumpHangTimeThreshold: 1
   JumpHangAcceleration: 1.1
-  WallJumpForce: {x: 13, y: 23}
-  WallJumpTime: 0.15
-  WallJumpTurnSpeed: 0.15
-  CoyoteTime: 0.1
-  InputBuffectTime: 0.1
-  DoubleJump: 0
+  WallJumpForce: {x: 10, y: 20}
+  WallJumpTime: 0.1
+  CoyoteTime: 0.15
+  InputBufferTime: 0.15
+  EnableDoubleJump: 0
   SlideSpeed: 12
-  SlideSpeedChange: 10000
+  SlideSpeedChangeRate: 100
   DashCount: 1
   DashDistance: 10
   DashSpeed: 30

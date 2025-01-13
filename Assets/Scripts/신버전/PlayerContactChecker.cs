@@ -1,87 +1,80 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerContactChecker : MonoBehaviour
 {
     private PlayerController controller;
-    [Header("Current Contact State")]
-    [SerializeField] private bool onGround;
-    [SerializeField] private bool onFrontWall;
-    [SerializeField] private bool onBackWall;
+    private bool onGround;
+    private bool onFrontWall;
+    private bool onBackWall;
 
-    [Space(5)]
-
-    [Header("Ground Check  Settings")]
+    [Header("Ground Check Settings")]
     [SerializeField] private Transform groundCheckPos;
     [SerializeField] private Vector3 groundSizeOffset;
 
-    [Space(5)]
-
-    [Header("Wall Check  Settings")]
+    [Header("Wall Check Settings")]
     [SerializeField] private Transform frontCheckPos;
     [SerializeField] private Transform backCheckPos;
     [SerializeField] private Vector3 wallSizeOffset;
-    private Vector2 wallOffset;
-
-    [Space(5)]
 
     [Header("Layer Mask")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
 
-    [Space(5)]
-
     [Header("Default Option")]
-    [SerializeField] private bool unify_CheckBox_Offset;
-   
+    [SerializeField] private bool unifyCheckBoxOffset;
+
+    private Vector2 wallOffset;
 
     private void Start()
     {
         controller = GetComponent<PlayerController>();
     }
-    void Update()
+
+    private void Update()
     {
+        CheckGroundContact();
+        CheckWallContact();
+    }
 
+    private void CheckGroundContact()
+    {
         onGround = Physics2D.OverlapBox(groundCheckPos.position, groundSizeOffset, 0, groundLayer);
+    }
 
+    private void CheckWallContact()
+    {
+        if (!AreWallCheckPositionsAssigned()) return;
 
-        //벽 체크는 게임에 따라서 사용이 될수도 있고 안될수도 있기떄문에 예외처리한다.
-        if (!CheckPositionAssigned())
-            return;
+        wallOffset = unifyCheckBoxOffset ? new Vector3(groundSizeOffset.y, groundSizeOffset.x, groundSizeOffset.z) : wallSizeOffset;
 
-
-        if (unify_CheckBox_Offset)
-            wallOffset = new Vector3(groundSizeOffset.y, groundSizeOffset.x, groundSizeOffset.z);
-        else
-            wallOffset = wallSizeOffset;
-
-        onFrontWall =(( Physics2D.OverlapBox(frontCheckPos.position, wallOffset, 0, wallLayer) && controller.Movement.FacingRight())||
-             (Physics2D.OverlapBox(backCheckPos.position, wallOffset, 0, wallLayer) && !controller.Movement.FacingRight())) && !controller.Jump.isWallJumping;
-
-        onBackWall = ((Physics2D.OverlapBox(frontCheckPos.position, wallOffset, 0, wallLayer) && !controller.Movement.FacingRight()) ||
-             (Physics2D.OverlapBox(backCheckPos.position, wallOffset, 0, wallLayer) && controller.Movement.FacingRight()))&& !controller.Jump.isWallJumping;
+     
+        onFrontWall = ((Physics2D.OverlapBox(frontCheckPos.position, wallOffset, 0, wallLayer) && controller.FacingRight()) ||
+             (Physics2D.OverlapBox(backCheckPos.position, wallOffset, 0, wallLayer) && !controller.FacingRight())) && !controller.Jump.isWallJumping;
+        onBackWall = ((Physics2D.OverlapBox(frontCheckPos.position, wallOffset, 0, wallLayer) && !controller.FacingRight()) ||
+             (Physics2D.OverlapBox(backCheckPos.position, wallOffset, 0, wallLayer) && controller.FacingRight())) && !controller.Jump.isWallJumping;
+    }
+    private bool AreWallCheckPositionsAssigned()
+    {
+        return frontCheckPos != null && backCheckPos != null;
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = onGround ? Color.green : Color.red;
-        Gizmos.DrawWireCube(groundCheckPos.position, groundSizeOffset);
+        DrawContactGizmo(groundCheckPos.position, groundSizeOffset, onGround);
 
+        if (!AreWallCheckPositionsAssigned()) return;
 
-        if (!CheckPositionAssigned())
-            return;
-
-        Gizmos.color = onFrontWall ? Color.green : Color.red;
-        Gizmos.DrawWireCube(frontCheckPos.position, wallOffset);
-
-        Gizmos.color = onBackWall ? Color.green : Color.red;
-        Gizmos.DrawWireCube(backCheckPos.position, wallOffset);
+        DrawContactGizmo(frontCheckPos.position, wallOffset, onFrontWall);
+        DrawContactGizmo(backCheckPos.position, wallOffset, onBackWall);
     }
 
-    private bool CheckPositionAssigned() { return (frontCheckPos != null || backCheckPos != null); }
+    private void DrawContactGizmo(Vector3 position, Vector3 size, bool isContact)
+    {
+        Gizmos.color = isContact ? Color.green : Color.red;
+        Gizmos.DrawWireCube(position, size);
+    }
 
-    public bool GetOnGround() { return onGround; }
-    public bool GetOnFrontWall() { return onFrontWall; }
-    public bool GetOnBackWall() { return onBackWall; }
+    public bool IsOnGround() => onGround;
+    public bool IsOnFrontWall() => onFrontWall;
+    public bool IsOnBackWall() => onBackWall;
 }

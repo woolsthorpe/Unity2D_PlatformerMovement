@@ -12,42 +12,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a90bc751b3f7664c9ccaadf2272b616, type: 3}
   m_Name: ver.HollowKnight
   m_EditorClassIdentifier: 
-  MaxSpeed: 9.01
+  MaxSpeed: 11
   MaxAcceleration: 100
   MaxDecceleration: 100
+  MaxTurnSpeed: 100
   MaxAirAcceleration: 100
   MaxAirDecceleration: 100
-  MaxTurnSpeed: 65
-  MaxAirTurnSpeed: 65
+  MaxAirTurnSpeed: 100
   UseAcceleration: 1
   JumpHeight: 5.5
   TimeToJumpApex: 0.5
   JumpForce: 22
-  FallGravityMult: 2
-  FastFallGravityMult: 1
+  FallGravityMultiplier: 1.5
+  FastFallGravityMultiplier: 2
   MaxFallSpeed: 18
   MaxFastFallSpeed: 20
   GravityStrength: -44
   GravityScale: 4.485219
-  JumpCutGravityMult: 3.5
-  JumpHangGravityMult: 1
+  JumpCutGravityMultiplier: 2
+  JumpHangGravityMultiplier: 0.5
   JumpHangTimeThreshold: 0
   JumpHangAcceleration: 1
   WallJumpForce: {x: 10, y: 20}
   WallJumpTime: 0.3
-  WallJumpTurnSpeed: 0.85
-  CoyoteTime: 0.1
-  InputBuffectTime: 0.1
-  DoubleJump: 1
-  SlideSpeed: 12
-  SlideSpeedChange: 50
-  DashCount: 0
+  CoyoteTime: 0.135
+  InputBufferTime: 0.135
+  EnableDoubleJump: 1
+  SlideSpeed: 1
+  SlideSpeedChangeRate: 100
+  DashCount: 1
   DashDistance: 0
   DashSpeed: 0
   DashEndSpeed: 0
-  DashTurnSpeed: 0
+  DashTurnSpeed: 0.1
   DashSleepTime: 0
   DashAttackTime: 0
   DashEndTime: 0
   DashRefillTime: 0
-  DashBufferTime: 0
+  DashBufferTime: 0.01

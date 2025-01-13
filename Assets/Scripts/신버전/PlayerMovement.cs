@@ -1,137 +1,117 @@
-using JY.PlatformerBase;
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 public class PlayerMovement : MonoBehaviour
 {
     private PlayerController controller;
     private PlayerMovementData data;
 
-   
     [Header("Options")]
-    [SerializeField] private float friction = 0;
-    private float maxSpeedChange;
+    [SerializeField] private float friction = 0f;
 
     [Header("Current State")]
     private Vector2 inputDirection;
-    public Vector2 currentVelocity;
-    [SerializeField] private Vector2 desireVelocity;
-     public bool isPressingKey { get; private set; }
-    [SerializeField] private bool onGround;
+    private Vector2 currentVelocity;
+    private Vector2 desiredVelocity;
+
+    public bool IsPressingKey { get; private set; }
+    private bool onGround;
+    private float maxSpeedChange;
+
     private void Start()
     {
         controller = GetComponent<PlayerController>();
         data = controller.Data;
     }
 
+    private void Update()
+    {
+        HandlePlayerTurning();
+        desiredVelocity = new Vector2(inputDirection.x, 0f) * Mathf.Max(data.MaxSpeed - friction, 0f);
+    }
+
+    private void FixedUpdate()
+    {
+        currentVelocity = controller.GetCurrentVelocity();
+        onGround = controller.IsOnGround();
+
+        if (data.UseAcceleration)
+        {
+            RunWithAcceleration();
+        }
+        else
+        {
+            if (onGround) 
+                RunWithoutAcceleration();
+            else 
+                RunWithAcceleration();
+        }
+    }
+
     public void HandleInput()
     {
         inputDirection.x = Input.GetAxisRaw("Horizontal");
         inputDirection.y = Input.GetAxisRaw("Vertical");
-    }
-   
-    private void Update()
-    {
-        if (inputDirection.x != 0)
-        {
-            isPressingKey = true;
-
-            if(controller.Jump.isSliding && controller.Jump.wallSlideTurnSprite)
-                TurnPlayerSprite((int)Mathf.Sign(inputDirection.x*-1));
-            else if(!controller.Jump.isWallJumping)
-                TurnPlayerSprite((int)Mathf.Sign(inputDirection.x));
-        }
-        else
-            isPressingKey = false;
-
-        desireVelocity = new Vector2(inputDirection.x, 0f) * Mathf.Max(data.MaxSpeed - friction, 0f);
+        IsPressingKey = inputDirection.x != 0;
     }
 
-
-
-    private void FixedUpdate()
+    private void HandlePlayerTurning()
     {
+        if (!IsPressingKey)
+            return;
 
+        int direction = (int)Mathf.Sign(inputDirection.x);
 
-        currentVelocity = controller.Rigid.linearVelocity;
-        onGround = controller.Contact.GetOnGround();
-
-        //���ӵ��� �̿��ؼ� �����ϰ� ��������
-        //�ƴϸ� ���ӵ��� ������� �ʰ� �ﰡ������ ���������� �����Ѵ�.
-
-
-        if (data.UseAcceleration)
-            RunWIthAcceleration();
-        else
+        if (controller.Jump.isSliding && controller.Jump.Apply_TurnSpriteOnSlide)
         {
-            if (onGround)
-                RunWithoutAcceleration();
-            else
-                RunWIthAcceleration();
+            direction *= -1;
         }
 
+        if (!controller.Jump.isWallJumping && !controller.isDashing)
+        {
+            controller.TurnPlayerSprite(direction);
+        }
     }
-
-
-    private void RunWIthAcceleration()
+    private void RunWithAcceleration()
     {
-
-        if (isPressingKey)
+        if (IsPressingKey)
         {
             if (Mathf.Sign(inputDirection.x) != Mathf.Sign(currentVelocity.x))
                 maxSpeedChange = onGround ? data.MaxTurnSpeed : data.MaxAirTurnSpeed;
             else
-                maxSpeedChange = onGround ?data. MaxAcceleration : data.MaxAirAcceleration;
+                maxSpeedChange = onGround ? data.MaxAcceleration : data.MaxAirAcceleration;
         }
         else
             maxSpeedChange = onGround ? data.MaxDecceleration : data.MaxAirDecceleration;
 
         if (controller.Jump.CanJumpHang())
-            desireVelocity.x *= data.JumpHangAcceleration;
-        
-        if (controller.Jump.isWallJumping)
-            maxSpeedChange = data.WallJumpTurnSpeed * data.MaxAirTurnSpeed;
+            desiredVelocity.x *= data.JumpHangAcceleration;
 
         if (controller.isDashAttacking)
             maxSpeedChange *= data.DashTurnSpeed;
 
-        currentVelocity.x = Mathf.MoveTowards(currentVelocity.x, desireVelocity.x, maxSpeedChange * Time.deltaTime);
-      
-        if(!controller.isDashing)
-            controller.Rigid.linearVelocity = currentVelocity;
+        currentVelocity.x = Mathf.MoveTowards(currentVelocity.x, desiredVelocity.x, maxSpeedChange * Time.deltaTime);
 
-      
+        if (!controller.isDashing && !controller.Jump.isWallJumping)
+            controller.SetCurrentVelocity(currentVelocity);
     }
+
     private void RunWithoutAcceleration()
     {
-        currentVelocity.x = desireVelocity.x;
-        controller.Rigid.linearVelocity = currentVelocity;
+        currentVelocity.x = desiredVelocity.x;
+        controller.SetCurrentVelocity(currentVelocity);
     }
 
-    public void ChangeFriction(float friction)
+   
+   
+    public Vector2 GetInputDirection() => inputDirection;
+
+    #region �ܺ� ��ȣ�ۿ�
+    public void ChangeFriction(float newFriction)
     {
-        Debug.Log($"{this.friction} => {friction} ����");
-        this.friction = friction;
+        Debug.Log($"{friction} => {newFriction}");
+        friction = newFriction;
     }
-    public bool FacingRight()
-    {
-        return (transform.localScale.x > 0);
-    }
-    public void TurnPlayerSprite(int direciton)
-    {
-        transform.localScale = new Vector3(direciton, 1, 1);
-    }
-    public float GetInputDirectionX()
-    {
-        return inputDirection.x;
-    }
-    public float GetInputDirectionY()
-    {
-        return inputDirection.y;
-    }
-    public Vector2 GetInputDirection()
-    {
-        return inputDirection;
-    }
+    #endregion
 }

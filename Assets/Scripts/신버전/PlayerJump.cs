@@ -6,52 +6,49 @@ using UnityEngine;
 
 public class PlayerJump : MonoBehaviour
 {
+   
+
+    [Header("Jump Option")]
     private PlayerController controller;
     private PlayerMovementData data;
-
-    [Header("Current JumpState")]
-    private float jumpForce;
-
     public bool isJumping { get;  set; }
     public bool isWallJumping { get;  set; }
-
     public bool isJumpCut { get; set; }
-    [field:SerializeField] public bool isSliding { get;  set; }
-
-    [SerializeField] private bool isJumpFalling;
-
-    [field:SerializeField]
+    public bool isSliding { get;  set; }
+    public bool isJumpFalling { get; private set; }
     public float lastOnGroundTime { get;  set; } //ground Check + apply coyoteTIme
     public float lastPressedJumpTime { get;  set; } // key input + apply BufferTime
 
-    private Vector2 wallJumpForce;
-
+    [Header("Wall Check Settings")]
     private float lastOnWallRightTime;
     private float lastOnWallLeftTime;
-    [SerializeField] private float lastOnWallTime;
+    private float lastOnWallTime;
 
-    [SerializeField] private float wallJumpStartTime;
-    [SerializeField] private int lastWallJumpDir;
+    private float currentJumpTime;
+    private int lastWallJumpDir;
+    private float slideSpeed;
 
-   
-  
+    [Header("WallJump Option")]
+    [SerializeField] private bool Apply_WallJump;
+    [SerializeField] private bool Apply_WallSlide;
+    [field: SerializeField] public bool Apply_TurnSpriteOnSlide { get; private set; }
+    [SerializeField] private bool Apply_RefillDoubleJumpOnWall;
+    [SerializeField] private bool Apply_keepWallSlideOnNoInput;
 
-    [SerializeField] private float slideSpeed;
-
-     public bool wallSlideTurnSprite;
-
-    [SerializeField] private bool canJumpAgain;
+    private bool canJumpAgain;
     private void Start()
     {
         controller = GetComponent<PlayerController>();
         this.data = controller.Data;
        
     }
+
+    
     public void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C))
         {
-            lastPressedJumpTime = data.InputBuffectTime;
+            lastPressedJumpTime = data.InputBufferTime;
         }
         if ((Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.C))&& CanJumpCut())
         {
@@ -67,37 +64,39 @@ public class PlayerJump : MonoBehaviour
         if (lastPressedJumpTime > 0)
             lastPressedJumpTime -= Time.deltaTime;
 
-        if (!controller.isDashing && !isJumping)
+        if (!controller.isDashing)
         {
-            if (controller.Contact.GetOnGround())
+            if (controller.IsOnGround() && !isJumping)
             {
-                canJumpAgain = data.DoubleJump;
+                canJumpAgain = data.EnableDoubleJump;
                 lastOnGroundTime = data.CoyoteTime;
                 isJumpCut = false;
             }
-            // �� üũ ����
-            if (controller.Contact.GetOnFrontWall())
+
+            if (controller.IsOnFrontWall())
                 lastOnWallRightTime = data.CoyoteTime;
 
-            if (controller.Contact.GetOnBackWall())
+            if (controller.IsOnBackWall())
                 lastOnWallLeftTime = data.CoyoteTime;
 
             lastOnWallTime = Mathf.Max(lastOnWallLeftTime, lastOnWallRightTime);
         }
        
 
-        if (CanWallJump() && lastPressedJumpTime > 0)
+        if (CanWallJump() && lastPressedJumpTime > 0 &&Apply_WallJump)
         {
-            wallJumpStartTime = Time.time;
+            currentJumpTime = data.WallJumpTime;
             lastWallJumpDir = (lastOnWallRightTime > 0) ? -1 : 1;
             WallJump(lastWallJumpDir);
         }
-        else if ((CanJump() || (canJumpAgain&&!isJumping && !isWallJumping)) && lastPressedJumpTime > 0)
+        else if (CanJump() && lastPressedJumpTime > 0)
         {
             Jump();
-
-
-            //���� ��� �����ϸ� �������� �ƴ� ���������� �ҋ��� ����
+        }
+        else if(CanDoubleJump()&& lastPressedJumpTime > 0)
+        {
+            canJumpAgain = false;
+            Jump();
         }
 
         ApplyGravity();
@@ -112,19 +111,24 @@ public class PlayerJump : MonoBehaviour
     }
     private void SlideCheck()
     {
-        if (CanSlide() && ((lastOnWallLeftTime > 0 && controller.Movement.GetInputDirectionX() < 0)
-                     || (lastOnWallRightTime > 0 && controller.Movement.GetInputDirectionX() > 0)))
+        if (CanSlide() &&Apply_WallSlide&&((lastOnWallLeftTime > 0 && controller.GetInputDirection().x < 0)
+                     || (lastOnWallRightTime > 0 && controller.GetInputDirection().x > 0)))
         //if(CanSlide() && Mathf.Sign(controller.Movement.inputDirection.x) == Mathf.Sign(lastWallJumpDir))
         {
-            canJumpAgain = data.DoubleJump;
+            canJumpAgain = Apply_RefillDoubleJumpOnWall && data.EnableDoubleJump;
             isSliding = true;
         }
-        else
+        else if(Apply_keepWallSlideOnNoInput&&((lastOnWallLeftTime > 0 && controller.GetInputDirection().x== 1)
+                     || (lastOnWallRightTime > 0 && controller.GetInputDirection().x == -1)))
             isSliding = false;
+        else if(!Apply_keepWallSlideOnNoInput)
+            isSliding = false;
+        Debug.Log($"(({lastOnWallLeftTime > 0} && {controller.GetInputDirection().x > 0}) " +
+            $"|| ({lastOnWallRightTime > 0} && {controller.GetInputDirection().x < 0})))");
     }
     private void JumpCheck()
     {
-        if (isJumping && controller.Rigid.linearVelocity.y < 0)
+        if (isJumping && controller.GetCurrentVelocity().y < 0)
         {
             isJumping = false;
 
@@ -132,7 +136,7 @@ public class PlayerJump : MonoBehaviour
                 isJumpFalling = true;
         }
 
-        if (isWallJumping && Time.time - wallJumpStartTime > data.WallJumpTime)
+        if (isWallJumping && currentJumpTime<0)
             isWallJumping = false;
 
         if (lastOnGroundTime > 0 && !isJumping && !isWallJumping)
@@ -143,7 +147,7 @@ public class PlayerJump : MonoBehaviour
                 isJumpFalling = false;
         }
 
-        if (!controller.Contact.GetOnGround())
+        if (!controller.IsOnGround())
             lastOnGroundTime -= Time.deltaTime;
 
         if (lastOnWallRightTime > 0)
@@ -152,19 +156,13 @@ public class PlayerJump : MonoBehaviour
             lastOnWallLeftTime -= Time.deltaTime;
         if (lastOnWallTime > 0)
             lastOnWallTime -= Time.deltaTime;
+
+        if (currentJumpTime > 0)
+            currentJumpTime -= Time.deltaTime;
     }
     private void Jump()
     {
-        if(lastOnGroundTime<0)
-        {
-            if (canJumpAgain)
-            {
-                canJumpAgain = false;
-                SetGravityScale(data.GravityScale);
-            }
-            else
-                return;
-        }
+      
 
         lastOnGroundTime = 0;
         lastPressedJumpTime = 0;
@@ -173,24 +171,23 @@ public class PlayerJump : MonoBehaviour
         isJumpCut = false;
         isJumpFalling = false;
 
-        jumpForce = data.JumpForce;
+        float jumpForce = data.JumpForce;
 
+        //if (controller.GetCurrentVelocity().y < 0)
+        //    jumpForce -= controller.GetCurrentVelocity().y;
 
-        if (controller.Rigid.linearVelocity.y < 0f)
-            controller.Rigid.linearVelocity = new Vector2(controller.Rigid.linearVelocity.x,0);
-
-        controller.Rigid.linearVelocity = new Vector2(controller.Rigid.linearVelocity.x, jumpForce);
-     //   Debug.Log($"{jumpForce}  {controller.Rigid.gravityScale}");
+        controller.SetCurrentVelocity(new Vector2(controller.GetCurrentVelocity().x,0));
+        controller.Rigid.AddForce(Vector2.up* jumpForce, ForceMode2D.Impulse);
     }
 
     private void WallJump(int dir)
     {
-
-        canJumpAgain = data.DoubleJump;
+        canJumpAgain = Apply_RefillDoubleJumpOnWall && data.EnableDoubleJump;
         isWallJumping = true;
         isJumping = false;
         isJumpCut = false;
         isJumpFalling = false;
+        isSliding = false;
 
         lastPressedJumpTime = 0;
         lastOnGroundTime = 0;
@@ -198,55 +195,50 @@ public class PlayerJump : MonoBehaviour
         lastOnWallLeftTime = 0;
         lastOnWallRightTime = 0;
         lastOnWallTime = 0;
-        //canJumpAgain = data.ApplyDoubleJump;
-
-        wallJumpForce = data.WallJumpForce;
+   
+        Vector2 wallJumpForce = data.WallJumpForce;
         wallJumpForce.x *= dir;
 
-        if (Mathf.Sign(controller.Rigid.linearVelocity.x) != Mathf.Sign(wallJumpForce.x))
-            wallJumpForce.x += Mathf.Abs(controller.Rigid.linearVelocity.x);
-        if (controller.Rigid.linearVelocity.y < 0f)
-            wallJumpForce.y += Mathf.Abs(controller.Rigid.linearVelocity.y);
+        //if (Mathf.Sign(controller.GetCurrentVelocity().x) != Mathf.Sign(wallJumpForce.x))
+        //    wallJumpForce.x -= controller.GetCurrentVelocity().x;
+        //if (controller.GetCurrentVelocity().y < 0)
+        //    wallJumpForce.y -= controller.GetCurrentVelocity().y;
 
-          controller.Rigid.AddForce(wallJumpForce, ForceMode2D.Impulse);
-     //  controller.Rigid.velocity= Vector2.MoveTowards(controller.Rigid.velocity, wallJumpForce, data.WallJumpTurnSpeed * Time.deltaTime);
-        // controller.Rigid.velocity = new Vector2(wallJumpForce.x, wallJumpForce.y);
-        controller.Movement.TurnPlayerSprite(dir);
-        // walljump�� ������ȯ
+        controller.SetCurrentVelocity(Vector2.zero);
+        controller.Rigid.AddForce(wallJumpForce, ForceMode2D.Impulse);
+        controller.TurnPlayerSprite(dir);
     }
     private void Slide()
     {
-        slideSpeed = Mathf.MoveTowards(controller.Rigid.linearVelocity.y, -data.SlideSpeed, data.SlideSpeedChange*Time.deltaTime);
-        controller.Rigid.linearVelocity = new Vector2(controller.Rigid.linearVelocity.x,slideSpeed);
-
+            slideSpeed = Mathf.MoveTowards(controller.GetCurrentVelocity().y, -data.SlideSpeed, data.SlideSpeedChangeRate * Time.fixedDeltaTime);
+            controller.SetCurrentVelocity(new Vector2(controller.GetCurrentVelocity().x,slideSpeed));
     }
     private void ApplyGravity()
     {
+     
         if (isSliding || controller.isDashing)
             SetGravityScale(0);
         else if (isJumpCut)
         {
-            SetGravityScale(data.GravityScale * data.JumpCutGravityMult);
-            SetMaxFallSpeed(Mathf.Max(MathF.Abs(controller.Rigid.linearVelocity.y),data.MaxFallSpeed));
+            SetGravityScale(data.GravityScale * data.JumpCutGravityMultiplier);
+            SetMaxFallSpeed(Mathf.Max(MathF.Abs(controller.GetCurrentVelocity().y),data.MaxFallSpeed));
         }
         else if (CanJumpHang())
         {
             // hang
-            SetGravityScale(data.GravityScale * data.JumpHangGravityMult);
+            SetGravityScale(data.GravityScale * data.JumpHangGravityMultiplier);
         }
-        else if (controller.Rigid.linearVelocity.y < 0)
+        else if (controller.GetCurrentVelocity().y < 0)
         {
-            // �϶�
-        
-            if(controller.Movement.GetInputDirectionY()<0)
+            if(controller.GetInputDirection().y< 0)
             {
-                SetGravityScale(data.GravityScale * data.FastFallGravityMult);
-                SetMaxFallSpeed(MathF.Max(MathF.Abs(controller.Rigid.linearVelocity.y), data.MaxFastFallSpeed));
+                SetGravityScale(data.GravityScale * data.FastFallGravityMultiplier);
+                SetMaxFallSpeed(MathF.Max(MathF.Abs(controller.GetCurrentVelocity().y), data.MaxFastFallSpeed));
             }
             else
             {
-                SetGravityScale(data.GravityScale * data.FallGravityMult);
-                SetMaxFallSpeed(MathF.Max(MathF.Abs(controller.Rigid.linearVelocity.y), data.FallGravityMult));
+                SetGravityScale(data.GravityScale * data.FallGravityMultiplier);
+                SetMaxFallSpeed(MathF.Max(MathF.Abs(controller.GetCurrentVelocity().y), data.FallGravityMultiplier));
             }
         }
         else
@@ -255,23 +247,27 @@ public class PlayerJump : MonoBehaviour
 
     public void SetGravityScale(float scaleAmount)
     {
-        controller.Rigid.gravityScale = scaleAmount;
+        controller.SetGravityScale(scaleAmount);
     }
     private void SetMaxFallSpeed(float speedAmount)
     {
-        controller.Rigid.linearVelocity = new Vector2(controller.Rigid.linearVelocity.x, Mathf.Max(controller.Rigid.linearVelocity.y, -speedAmount));
+        controller.SetCurrentVelocity( new Vector2(controller.GetCurrentVelocity().x, Mathf.Max(controller.GetCurrentVelocity().y, -speedAmount)));
     }
     private bool CanJumpCut()
     {
-        return (isJumping || isWallJumping) && controller.Rigid.linearVelocity.y > 0;
+        return (isJumping || isWallJumping) && controller.GetCurrentVelocity().y > 0;
     }
     private bool CanJump()
     {
-        return lastOnGroundTime > 0 && !controller.isDashing;
+        return lastOnGroundTime > 0 && !controller.isDashing&&!isJumping && !isWallJumping;
+    }
+    private bool CanDoubleJump()
+    {
+        return canJumpAgain && !controller.isDashing /*&& !isJumping && !isWallJumping*/;
     }
     private bool CanWallJump()
     {
-        return lastOnWallTime > 0 && lastOnGroundTime <= 0 && (!isWallJumping ||
+        return lastOnWallTime > 0 && !controller.IsOnGround() && !controller.isDashing&&(!isWallJumping ||
             (lastOnWallRightTime >0 && lastWallJumpDir ==1)||(lastOnWallLeftTime>0 && lastWallJumpDir==-1));
     }
     private bool CanSlide()
@@ -280,10 +276,18 @@ public class PlayerJump : MonoBehaviour
     }
     public bool CanJumpHang()
     {
-        return CheckJumpSatae() && Mathf.Abs(controller.Rigid.linearVelocity.y) < data.JumpHangTimeThreshold;
+        return CheckJumpSatae() && Mathf.Abs(controller.GetCurrentVelocity().y) < data.JumpHangTimeThreshold;
     }
+   
     private bool CheckJumpSatae()
     {
         return isJumping || isWallJumping || isJumpFalling;
     }
+
+    #region 외부 상호작용
+    public void RefillDoubleJump()
+    {
+        canJumpAgain = true;
+    }
+    #endregion();
 }

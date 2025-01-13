@@ -31,7 +31,10 @@ public class PlayerController : MonoBehaviour
         Contact = GetComponent<PlayerContactChecker>();
         Movement = GetComponent<PlayerMovement>();
         Jump = GetComponent<PlayerJump>();
-        Dash = GetComponent<PlayerDash>();
+
+        if (TryGetComponent(out PlayerDash tmp))
+            Dash = tmp;
+        
 
         isDashing = false;
         isDashAttacking = false;
@@ -41,6 +44,31 @@ public class PlayerController : MonoBehaviour
     {
         Movement.HandleInput();
         Jump.HandleInput();
-        Dash.HandleInput();
+        if(Dash)
+            Dash.HandleInput();
+
     }
+    public bool IsOnGround() => Contact.IsOnGround();
+    public bool IsOnFrontWall() => Contact.IsOnFrontWall();
+    public bool IsOnBackWall() => Contact.IsOnBackWall();
+
+    public Vector2 GetInputDirection() => Movement.GetInputDirection();
+
+    public void SetCurrentVelocity(Vector2 newVelocity)
+    {
+        Rigid.velocity = newVelocity;
+    }
+    public Vector2 GetCurrentVelocity() => Rigid.velocity;
+    public void SetGravityScale(float scale)
+    {
+        Rigid.gravityScale=scale;   
+    }
+
+    public bool FacingRight() => transform.localScale.x > 0;
+
+    public void TurnPlayerSprite(int direction)
+    {
+        transform.localScale = new Vector3(direction, 1f, 1f);
+    }
+    public bool IsOnWall() => Jump.isSliding || Jump.isWallJumping;
 }

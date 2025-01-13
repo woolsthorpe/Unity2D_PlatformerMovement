@@ -68,7 +68,7 @@ namespace JY.PlatformerBase
         private void FixedUpdate()
         {
         
-            currentVelocity = rigid.linearVelocity;
+            currentVelocity = rigid.velocity;
             onGround = ground.GetOnGround();
 
             //���ӵ��� �̿��ؼ� �����ϰ� ��������
@@ -101,12 +101,12 @@ namespace JY.PlatformerBase
                 maxSpeedChange = onGround ? maxDecceleration : maxAirDecceleration;
 
             currentVelocity.x = Mathf.MoveTowards(currentVelocity.x,desireVelocity.x,maxSpeedChange*Time.deltaTime);
-            rigid.linearVelocity = currentVelocity;
+            rigid.velocity = currentVelocity;
         }
         private void RunWithoutAcceleration()
         {
             currentVelocity.x = desireVelocity.x;
-            rigid.linearVelocity = currentVelocity;
+            rigid.velocity = currentVelocity;
         }
     }
 }

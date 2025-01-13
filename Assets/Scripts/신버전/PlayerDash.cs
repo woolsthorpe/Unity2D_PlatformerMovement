@@ -8,10 +8,12 @@ public class PlayerDash : MonoBehaviour
     private PlayerMovementData data;
 
     
-    [SerializeField] private float lastPressedDashTime;
-    [SerializeField] private Vector2 lastDashDir;
-    [SerializeField] private int currentDashCount;
+    private float lastPressedDashTime;
+    private Vector2 lastDashDir;
+    private int currentDashCount;
     private bool dashRefilling;
+    [SerializeField] private bool refillDashOnWall;
+    [SerializeField] private bool noCoolTimeDashReFill;
 
     private void Start()
     {
@@ -29,28 +31,26 @@ public class PlayerDash : MonoBehaviour
 
     private void Update()
     {
-    
+        if (noCoolTimeDashReFill && CheckDashRefill())
+            currentDashCount = data.DashCount;
 
-        if(CanDash()&& lastPressedDashTime>0)
+
+        if (CanDash()&& lastPressedDashTime>0)
         {
-           
-
             StartCoroutine(PerformSleep(data.DashSleepTime));
 
-            if (controller.Movement.GetInputDirection() != Vector2.zero)
-                lastDashDir = controller.Movement.GetInputDirection();
+            if (controller.GetInputDirection() != Vector2.zero)
+                lastDashDir = controller.GetInputDirection();
             else
-                lastDashDir = controller.Movement.FacingRight() ?Vector2.right:Vector2.left;
+                lastDashDir = controller.FacingRight() ?Vector2.right:Vector2.left;
 
+            if (lastDashDir.x != 0)
+                controller.TurnPlayerSprite((int)Mathf.Sign(lastDashDir.x));
             StartCoroutine(Dash());
         }
-
-        if (lastPressedDashTime > 0)
-            lastPressedDashTime -= Time.deltaTime;
+        UpdateDashTimers();
+        
     }
-    //dash���̰� �������� ����
-    //���� ��¦ ����
-    //���� �Ƚ�
     private IEnumerator Dash()
     {
         controller.isDashing = true;
@@ -65,12 +65,9 @@ public class PlayerDash : MonoBehaviour
         controller.isDashAttacking = true;
 
         float currentTime = 0;
-        // Vector2 dashVelocity = lastDashDir.normalized * (data.DashDistance / data.DashAttackTime);
-        //Debug.Log(lastDashDir.normalized * data.DashSpeed);
-        //�뽬 ���ǵ�� xy����
         while (currentTime <= data.DashAttackTime)
         {
-           controller.Rigid.linearVelocity = lastDashDir.normalized*data.DashSpeed;
+           controller.SetCurrentVelocity(lastDashDir.normalized*data.DashSpeed);
             currentTime += Time.fixedDeltaTime;
 
             yield return new WaitForFixedUpdate();
@@ -84,19 +81,21 @@ public class PlayerDash : MonoBehaviour
         //Debug.Log(lastDashDir.normalized * data.DashSpeed);
         while (currentTime <= data.DashEndTime)
         {
-            controller.Rigid.linearVelocity = lastDashDir.normalized * data.DashEndSpeed;
+            controller.SetCurrentVelocity(lastDashDir.normalized * data.DashEndSpeed);
             //x�� ���� �̿��ϰ� ���ӵȴ� x 13.84 y 15
             currentTime += Time.fixedDeltaTime;
 
             yield return new WaitForFixedUpdate();
         }
-
-        Debug.Log($" {lastDashDir.normalized}    {data.DashSpeed}  {controller.Rigid.linearVelocity}");
         
         controller.isDashing = false;
     }
 
-
+    private void UpdateDashTimers()
+    {
+        if (lastPressedDashTime > 0)
+            lastPressedDashTime -= Time.deltaTime;
+    }
     public void Sleep(float duration)
     {
         StartCoroutine(PerformSleep(duration));
@@ -109,10 +108,15 @@ public class PlayerDash : MonoBehaviour
     }
     private bool CanDash()
     {
-        if (!controller.isDashing && currentDashCount < data.DashCount && controller.Jump.lastOnGroundTime > 0 && !dashRefilling)//���� ����
+        if (!controller.isDashing && !dashRefilling && currentDashCount < data.DashCount && CheckDashRefill())//���� ����
             StartCoroutine(RefillDash(data.DashRefillTime));
 
-        return currentDashCount>0;
+        return currentDashCount>0 && data.DashDistance>0;
+    }
+
+    private bool CheckDashRefill()
+    {
+        return (controller.Jump.lastOnGroundTime > 0||controller.IsOnGround()) || (refillDashOnWall && controller.IsOnWall());
     }
 
     private IEnumerator RefillDash(float time)
@@ -120,6 +124,6 @@ public class PlayerDash : MonoBehaviour
         dashRefilling = true;
         yield return new WaitForSeconds(time);
         dashRefilling = false;
-        currentDashCount = (int)Mathf.Min(data.DashCount, currentDashCount + 1);
+        currentDashCount = data.DashCount;
     }
 }
