@@ -19,10 +19,10 @@ public class PlayerMovement : MonoBehaviour
     private bool onGround;
     private float maxSpeedChange;
 
-    private void Start()
+    public void Initialize(PlayerController controller)
     {
-        controller = GetComponent<PlayerController>();
-        data = controller.Data;
+        this.controller = controller;
+        this.data = controller.Data;
     }
 
     private void Update()
@@ -35,6 +35,10 @@ public class PlayerMovement : MonoBehaviour
     {
         currentVelocity = controller.GetCurrentVelocity();
         onGround = controller.IsOnGround();
+
+        if (controller.isDashing)
+            return;
+
 
         if (data.UseAcceleration)
         {

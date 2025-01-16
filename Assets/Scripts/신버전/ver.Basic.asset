@@ -10,43 +10,43 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a90bc751b3f7664c9ccaadf2272b616, type: 3}
-  m_Name: ver.HollowKnight
+  m_Name: ver.Basic
   m_EditorClassIdentifier: 
-  MaxSpeed: 11
-  MaxAcceleration: 100
-  MaxDecceleration: 100
-  MaxTurnSpeed: 100
-  MaxAirAcceleration: 100
-  MaxAirDecceleration: 100
-  MaxAirTurnSpeed: 100
+  MaxSpeed: 9.01
+  MaxAcceleration: 55
+  MaxDecceleration: 55
+  MaxTurnSpeed: 76
+  MaxAirAcceleration: 60
+  MaxAirDecceleration: 58
+  MaxAirTurnSpeed: 75
   UseAcceleration: 1
-  JumpHeight: 6.5
-  TimeToJumpApex: 0.5
-  JumpForce: 26
-  FallGravityMultiplier: 2
+  JumpHeight: 3.5
+  TimeToJumpApex: 0.3
+  JumpForce: 23.333332
+  FallGravityMultiplier: 1.5
   FastFallGravityMultiplier: 2
-  MaxFallSpeed: 18
-  MaxFastFallSpeed: 20
-  GravityStrength: -52
-  GravityScale: 5.3007135
+  MaxFallSpeed: 25
+  MaxFastFallSpeed: 30
+  GravityStrength: -77.77777
+  GravityScale: 7.9284167
   JumpCutGravityMultiplier: 2
   JumpHangGravityMultiplier: 0.5
-  JumpHangTimeThreshold: 0
-  JumpHangAcceleration: 1
-  WallJumpForce: {x: 8.5, y: 20}
-  WallJumpTime: 0.3
-  CoyoteTime: 0.2
-  InputBufferTime: 0.2
-  EnableDoubleJump: 1
+  JumpHangTimeThreshold: 1
+  JumpHangAcceleration: 1.1
+  WallJumpForce: {x: 10, y: 20}
+  WallJumpTime: 0.1
+  CoyoteTime: 0.15
+  InputBufferTime: 0.15
+  EnableDoubleJump: 0
   SlideSpeed: 12
   SlideSpeedChangeRate: 100
   DashCount: 1
   DashDistance: 10
   DashSpeed: 30
   DashEndSpeed: 15
-  DashTurnSpeed: 0.75
-  DashSleepTime: 0.01
-  DashAttackTime: 0.05
-  DashEndTime: 0.1
+  DashTurnSpeed: 0.5
+  DashSleepTime: 0.05
+  DashAttackTime: 0.045
+  DashEndTime: 0.15
   DashRefillTime: 0.1
   DashBufferTime: 0.1

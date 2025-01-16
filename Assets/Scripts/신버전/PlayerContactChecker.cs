@@ -21,7 +21,8 @@ public class PlayerContactChecker : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
 
     [Header("Default Option")]
-    [SerializeField] private bool unifyCheckBoxOffset;
+    [SerializeField] private bool Apply_UnifyAllCheckBoxOffset;
+    [SerializeField] private bool Apply_OffDrawGizmo;
 
     private Vector2 wallOffset;
 
@@ -45,7 +46,7 @@ public class PlayerContactChecker : MonoBehaviour
     {
         if (!AreWallCheckPositionsAssigned()) return;
 
-        wallOffset = unifyCheckBoxOffset ? new Vector3(groundSizeOffset.y, groundSizeOffset.x, groundSizeOffset.z) : wallSizeOffset;
+        wallOffset = Apply_UnifyAllCheckBoxOffset ? new Vector3(groundSizeOffset.y, groundSizeOffset.x, groundSizeOffset.z) : wallSizeOffset;
 
      
         onFrontWall = ((Physics2D.OverlapBox(frontCheckPos.position, wallOffset, 0, wallLayer) && controller.FacingRight()) ||
@@ -60,6 +61,9 @@ public class PlayerContactChecker : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (Apply_OffDrawGizmo)
+            return;
+
         DrawContactGizmo(groundCheckPos.position, groundSizeOffset, onGround);
 
         if (!AreWallCheckPositionsAssigned()) return;

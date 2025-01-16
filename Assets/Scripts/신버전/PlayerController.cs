@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public PlayerMovementData Data;
+    private PlayerMovementData beForData;
     public Rigidbody2D Rigid { get; private set; }
     public PlayerContactChecker Contact { get; private set; }
     public PlayerAnimator AnimHandler { get; private set; }
@@ -14,14 +15,19 @@ public class PlayerController : MonoBehaviour
     public bool isDashing { get; set; }
     public bool isDashAttacking { get; set; }
 
+    [field:SerializeField]public GameObject playerSprite { get; set; }
     private void Awake()
     {
         InitializeComponents();
+       // playerSprite = GetComponentInChildren<GameObject>();
     }
 
     private void Update()
     {
         HandlePlayerInput();
+
+        if (beForData != Data)
+            InitializeComponents();
     }
 
     private void InitializeComponents()
@@ -32,12 +38,22 @@ public class PlayerController : MonoBehaviour
         Movement = GetComponent<PlayerMovement>();
         Jump = GetComponent<PlayerJump>();
 
+        AnimHandler.Initialize(this);
+        Movement.Initialize(this);
+        Jump.Initialize(this);
+
         if (TryGetComponent(out PlayerDash tmp))
+        {
             Dash = tmp;
+            Dash.Initialize(this);
+        }
+           
         
 
         isDashing = false;
         isDashAttacking = false;
+
+        beForData = Data;
     }
 
     private void HandlePlayerInput()
@@ -71,4 +87,17 @@ public class PlayerController : MonoBehaviour
         transform.localScale = new Vector3(direction, 1f, 1f);
     }
     public bool IsOnWall() => Jump.isSliding || Jump.isWallJumping;
+
+    public void OnJumpEffect()
+    {
+        AnimHandler.JumpEffect();
+    }
+    public void OnLandingEffect()
+    {
+      //  AnimHandler.LandingEffect();
+    }
+    public void SlideEffect()
+    {
+
+    }
 }

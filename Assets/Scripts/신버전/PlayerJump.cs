@@ -14,7 +14,7 @@ public class PlayerJump : MonoBehaviour
     public bool isJumping { get;  set; }
     public bool isWallJumping { get;  set; }
     public bool isJumpCut { get; set; }
-    public bool isSliding { get;  set; }
+    [field:SerializeField]public bool isSliding { get;  set; }
     public bool isJumpFalling { get; private set; }
     public float lastOnGroundTime { get;  set; } //ground Check + apply coyoteTIme
     public float lastPressedJumpTime { get;  set; } // key input + apply BufferTime
@@ -36,14 +36,12 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] private bool Apply_keepWallSlideOnNoInput;
 
     private bool canJumpAgain;
-    private void Start()
+    public void Initialize(PlayerController controller)
     {
-        controller = GetComponent<PlayerController>();
+        this.controller = controller;
         this.data = controller.Data;
-       
     }
 
-    
     public void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C))
@@ -71,6 +69,8 @@ public class PlayerJump : MonoBehaviour
                 canJumpAgain = data.EnableDoubleJump;
                 lastOnGroundTime = data.CoyoteTime;
                 isJumpCut = false;
+
+                controller.OnLandingEffect();
             }
 
             if (controller.IsOnFrontWall())
@@ -118,13 +118,11 @@ public class PlayerJump : MonoBehaviour
             canJumpAgain = Apply_RefillDoubleJumpOnWall && data.EnableDoubleJump;
             isSliding = true;
         }
-        else if(Apply_keepWallSlideOnNoInput&&((lastOnWallLeftTime > 0 && controller.GetInputDirection().x== 1)
-                     || (lastOnWallRightTime > 0 && controller.GetInputDirection().x == -1)))
+        else if(Apply_keepWallSlideOnNoInput&&CanSlideOff())
             isSliding = false;
         else if(!Apply_keepWallSlideOnNoInput)
             isSliding = false;
-        Debug.Log($"(({lastOnWallLeftTime > 0} && {controller.GetInputDirection().x > 0}) " +
-            $"|| ({lastOnWallRightTime > 0} && {controller.GetInputDirection().x < 0})))");
+    
     }
     private void JumpCheck()
     {
@@ -162,8 +160,8 @@ public class PlayerJump : MonoBehaviour
     }
     private void Jump()
     {
-      
 
+        controller.OnJumpEffect();
         lastOnGroundTime = 0;
         lastPressedJumpTime = 0;
         isJumping = true;
@@ -273,6 +271,10 @@ public class PlayerJump : MonoBehaviour
     private bool CanSlide()
     {
         return (lastOnWallTime > 0 && !isJumping && !isWallJumping && !controller.isDashing && lastOnGroundTime <= 0);
+    }
+    private bool CanSlideOff()
+    {
+        return (!controller.IsOnFrontWall()&& !controller.IsOnBackWall())||controller.IsOnGround();
     }
     public bool CanJumpHang()
     {

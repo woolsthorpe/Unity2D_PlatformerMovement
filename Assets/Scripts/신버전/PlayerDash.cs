@@ -11,18 +11,18 @@ public class PlayerDash : MonoBehaviour
     private float lastPressedDashTime;
     private Vector2 lastDashDir;
     private int currentDashCount;
-    private bool dashRefilling;
+    private bool dashRefilling=false;
     [SerializeField] private bool refillDashOnWall;
     [SerializeField] private bool noCoolTimeDashReFill;
 
-    private void Start()
+    public void Initialize(PlayerController controller)
     {
-        this.controller = GetComponent<PlayerController>();
+        this.controller = controller;
         this.data = controller.Data;
-        dashRefilling = false;
 
         currentDashCount = data.DashCount;
     }
+
     public void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift))
@@ -78,11 +78,10 @@ public class PlayerDash : MonoBehaviour
 
 
         controller.Jump.SetGravityScale(data.GravityScale);
-        //Debug.Log(lastDashDir.normalized * data.DashSpeed);
+      
         while (currentTime <= data.DashEndTime)
         {
             controller.SetCurrentVelocity(lastDashDir.normalized * data.DashEndSpeed);
-            //x�� ���� �̿��ϰ� ���ӵȴ� x 13.84 y 15
             currentTime += Time.fixedDeltaTime;
 
             yield return new WaitForFixedUpdate();
@@ -102,9 +101,10 @@ public class PlayerDash : MonoBehaviour
     }
     private IEnumerator PerformSleep(float duration)
     {
+        float currentTimeScale = Time.timeScale;
         Time.timeScale = 0;
         yield return new WaitForSecondsRealtime(duration);
-        Time.timeScale = 1;
+        Time.timeScale = (currentTimeScale==0)?1:currentTimeScale;
     }
     private bool CanDash()
     {

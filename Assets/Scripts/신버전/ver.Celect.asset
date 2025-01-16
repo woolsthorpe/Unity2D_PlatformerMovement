@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: ver.Celect
   m_EditorClassIdentifier: 
   MaxSpeed: 9.01
-  MaxAcceleration: 55
-  MaxDecceleration: 55
+  MaxAcceleration: 79
+  MaxDecceleration: 76
   MaxTurnSpeed: 76
-  MaxAirAcceleration: 60
-  MaxAirDecceleration: 58
-  MaxAirTurnSpeed: 75
+  MaxAirAcceleration: 80
+  MaxAirDecceleration: 80
+  MaxAirTurnSpeed: 80
   UseAcceleration: 1
   JumpHeight: 3.5
   TimeToJumpApex: 0.3
@@ -26,19 +26,19 @@ MonoBehaviour:
   FallGravityMultiplier: 1.5
   FastFallGravityMultiplier: 2
   MaxFallSpeed: 25
-  MaxFastFallSpeed: 25
+  MaxFastFallSpeed: 30
   GravityStrength: -77.77777
   GravityScale: 7.9284167
   JumpCutGravityMultiplier: 2
   JumpHangGravityMultiplier: 0.5
   JumpHangTimeThreshold: 1
   JumpHangAcceleration: 1.1
-  WallJumpForce: {x: 10, y: 20}
-  WallJumpTime: 0.1
-  CoyoteTime: 0.15
-  InputBufferTime: 0.15
+  WallJumpForce: {x: 15, y: 25}
+  WallJumpTime: 0.15
+  CoyoteTime: 0.1
+  InputBufferTime: 0.1
   EnableDoubleJump: 0
-  SlideSpeed: 12
+  SlideSpeed: 10
   SlideSpeedChangeRate: 100
   DashCount: 1
   DashDistance: 10
