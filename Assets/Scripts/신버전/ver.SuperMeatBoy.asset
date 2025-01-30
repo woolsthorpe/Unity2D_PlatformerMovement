@@ -12,39 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a90bc751b3f7664c9ccaadf2272b616, type: 3}
   m_Name: ver.SuperMeatBoy
   m_EditorClassIdentifier: 
-  MaxSpeed: 17
-  MaxAcceleration: 30.5
-  MaxDecceleration: 60
-  MaxTurnSpeed: 80
-  MaxAirAcceleration: 43.6
-  MaxAirDecceleration: 9.6
-  MaxAirTurnSpeed: 43.6
-  UseAcceleration: 1
-  JumpHeight: 5
+  MaxSpeed: 25
+  RunAcceleration: 2
+  RunDecceleration: 10
+  MaxAccelAmount: 4
+  MaxDeccelAmount: 20
+  MaxAirAcceleration: 1
+  MaxAirDecceleration: 0
+  JumpHeight: 4.5
   TimeToJumpApex: 0.45
-  JumpForce: 22.222221
-  FallGravityMultiplier: 1.5
+  JumpForce: 20
+  FallGravityMultiplier: 2
   FastFallGravityMultiplier: 2
   MaxFallSpeed: 20
   MaxFastFallSpeed: 20
-  GravityStrength: -49.382717
-  GravityScale: 5.033916
-  JumpCutGravityMultiplier: 2
-  JumpHangGravityMultiplier: 0.5
+  GravityStrength: -44.444447
+  GravityScale: 1.4814816
+  JumpCutGravityMultiplier: 4
+  JumpHangGravityMultiplier: 0
   JumpHangTimeThreshold: 0
-  JumpHangAcceleration: 1
+  JumpHangMaxSpeed: 0
+  JumpHangAcceleration: 0
   WallJumpForce: {x: 20, y: 20}
   WallJumpTime: 0.2
+  WallJumpRunLerp: 0.75
   CoyoteTime: 0.2
-  InputBufferTime: 0.1
+  InputBufferTime: 0.2
   EnableDoubleJump: 0
   SlideSpeed: 15
-  SlideSpeedChangeRate: 40
+  SlideAccel: 3
   DashCount: 1
-  DashDistance: 0
   DashSpeed: 0
   DashEndSpeed: 0
-  DashTurnSpeed: 0.1
   DashSleepTime: 0
   DashAttackTime: 0
   DashEndTime: 0

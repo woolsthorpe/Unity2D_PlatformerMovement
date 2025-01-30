@@ -9,11 +9,11 @@ public class PlayerDash : MonoBehaviour
 
     
     private float lastPressedDashTime;
-    private Vector2 lastDashDir;
-    private int currentDashCount;
+    [SerializeField]private Vector2 lastDashDir;
+   [SerializeField] private int currentDashCount;
     private bool dashRefilling=false;
     [SerializeField] private bool refillDashOnWall;
-    [SerializeField] private bool noCoolTimeDashReFill;
+    //[SerializeField] private bool noCoolTimeDashReFill;
 
     public void Initialize(PlayerController controller)
     {
@@ -31,18 +31,24 @@ public class PlayerDash : MonoBehaviour
 
     private void Update()
     {
-        if (noCoolTimeDashReFill && CheckDashRefill())
-            currentDashCount = data.DashCount;
+        if (!controller.isDashing && !dashRefilling && currentDashCount < data.DashCount && CheckDashRefill())
+            StartCoroutine(RefillDash(data.DashRefillTime));
+
+        //if (noCoolTimeDashReFill && CheckDashRefill()&& !controller.isDashing)
+        //    currentDashCount = data.DashCount;
 
 
         if (CanDash()&& lastPressedDashTime>0)
         {
+           
+         
+
             StartCoroutine(PerformSleep(data.DashSleepTime));
 
             if (controller.GetInputDirection() != Vector2.zero)
                 lastDashDir = controller.GetInputDirection();
             else
-                lastDashDir = controller.FacingRight() ?Vector2.right:Vector2.left;
+                lastDashDir = controller.FacingRight() ? Vector2.right : Vector2.left;
 
             if (lastDashDir.x != 0)
                 controller.TurnPlayerSprite((int)Mathf.Sign(lastDashDir.x));
@@ -54,14 +60,13 @@ public class PlayerDash : MonoBehaviour
     private IEnumerator Dash()
     {
         controller.isDashing = true;
+        lastPressedDashTime = 0;
+        currentDashCount--;
+
         controller.Jump.isJumping = false;
         controller.Jump.isWallJumping = false;
         controller.Jump.isJumpCut = false;
-
         controller.Jump.lastOnGroundTime = 0;
-        lastPressedDashTime = 0;
-
-        currentDashCount--;
         controller.isDashAttacking = true;
 
         float currentTime = 0;
@@ -75,19 +80,20 @@ public class PlayerDash : MonoBehaviour
       
         currentTime = 0;
         controller.isDashAttacking = false;
-
-
+       // Debug.Log($"{lastDashDir.normalized * data.DashSpeed}  {controller.Rigid.velocity}   {controller.Rigid.gravityScale}");
+        //대쉬에따라 x축 y축의 이동거리가 다름 디버그시 나오는 방향,velocity값은 둘다 동일
         controller.Jump.SetGravityScale(data.GravityScale);
-      
+        controller.SetCurrentVelocity(lastDashDir.normalized * data.DashEndSpeed);
         while (currentTime <= data.DashEndTime)
         {
-            controller.SetCurrentVelocity(lastDashDir.normalized * data.DashEndSpeed);
+
             currentTime += Time.fixedDeltaTime;
 
             yield return new WaitForFixedUpdate();
         }
         
         controller.isDashing = false;
+        Debug.Log($"{lastDashDir.normalized * data.DashSpeed}  {controller.Rigid.velocity}   {controller.Rigid.gravityScale}");
     }
 
     private void UpdateDashTimers()
@@ -108,15 +114,12 @@ public class PlayerDash : MonoBehaviour
     }
     private bool CanDash()
     {
-        if (!controller.isDashing && !dashRefilling && currentDashCount < data.DashCount && CheckDashRefill())//���� ����
-            StartCoroutine(RefillDash(data.DashRefillTime));
-
-        return currentDashCount>0 && data.DashDistance>0;
+        return !controller.isDashing&&currentDashCount>0 && data.DashSpeed>0;
     }
 
     private bool CheckDashRefill()
     {
-        return (controller.Jump.lastOnGroundTime > 0||controller.IsOnGround()) || (refillDashOnWall && controller.IsOnWall());
+        return (controller.IsOnGround() || (refillDashOnWall && controller.IsOnWall()));
     }
 
     private IEnumerator RefillDash(float time)

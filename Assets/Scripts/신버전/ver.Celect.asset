@@ -12,14 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a90bc751b3f7664c9ccaadf2272b616, type: 3}
   m_Name: ver.Celect
   m_EditorClassIdentifier: 
-  MaxSpeed: 9.01
-  MaxAcceleration: 79
-  MaxDecceleration: 76
-  MaxTurnSpeed: 76
-  MaxAirAcceleration: 80
-  MaxAirDecceleration: 80
-  MaxAirTurnSpeed: 80
-  UseAcceleration: 1
+  MaxSpeed: 11
+  RunAcceleration: 2.5
+  RunDecceleration: 5
+  MaxAccelAmount: 11.363637
+  MaxDeccelAmount: 22.727274
+  MaxAirAcceleration: 0.65
+  MaxAirDecceleration: 0.65
   JumpHeight: 3.5
   TimeToJumpApex: 0.3
   JumpForce: 23.333332
@@ -32,21 +31,21 @@ MonoBehaviour:
   JumpCutGravityMultiplier: 2
   JumpHangGravityMultiplier: 0.5
   JumpHangTimeThreshold: 1
+  JumpHangMaxSpeed: 1.3
   JumpHangAcceleration: 1.1
   WallJumpForce: {x: 15, y: 25}
   WallJumpTime: 0.15
+  WallJumpRunLerp: 0.15
   CoyoteTime: 0.1
   InputBufferTime: 0.1
   EnableDoubleJump: 0
   SlideSpeed: 10
-  SlideSpeedChangeRate: 100
+  SlideAccel: 10
   DashCount: 1
-  DashDistance: 10
-  DashSpeed: 30
+  DashSpeed: 20
   DashEndSpeed: 15
-  DashTurnSpeed: 0.5
   DashSleepTime: 0.05
-  DashAttackTime: 0.045
+  DashAttackTime: 0.15
   DashEndTime: 0.15
   DashRefillTime: 0.1
   DashBufferTime: 0.1

@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public PlayerJump Jump { get; private set; }
     public PlayerDash Dash { get; private set; }
 
-    public bool isDashing { get; set; }
+    [field:SerializeField]public bool isDashing { get; set; }
     public bool isDashAttacking { get; set; }
 
     [field:SerializeField]public GameObject playerSprite { get; set; }
@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
 
         if (beForData != Data)
             InitializeComponents();
+        //테스트 할때만 남겨두고 작업마무리할시 삭제
     }
 
     private void InitializeComponents()

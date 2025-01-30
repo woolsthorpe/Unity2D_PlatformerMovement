@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: ver.Basic
   m_EditorClassIdentifier: 
   MaxSpeed: 9.01
-  MaxAcceleration: 55
-  MaxDecceleration: 55
-  MaxTurnSpeed: 76
-  MaxAirAcceleration: 60
-  MaxAirDecceleration: 58
-  MaxAirTurnSpeed: 75
-  UseAcceleration: 1
+  RunAcceleration: 0.01
+  RunDecceleration: 0.01
+  MaxAccelAmount: 0.055493895
+  MaxDeccelAmount: 0.055493895
+  MaxAirAcceleration: 3
+  MaxAirDecceleration: 3
   JumpHeight: 3.5
   TimeToJumpApex: 0.3
   JumpForce: 23.333332
@@ -32,19 +31,20 @@ MonoBehaviour:
   JumpCutGravityMultiplier: 2
   JumpHangGravityMultiplier: 0.5
   JumpHangTimeThreshold: 1
+  JumpHangMaxSpeed: 0
   JumpHangAcceleration: 1.1
   WallJumpForce: {x: 10, y: 20}
   WallJumpTime: 0.1
+  WallJumpRunLerp: 0
   CoyoteTime: 0.15
   InputBufferTime: 0.15
   EnableDoubleJump: 0
   SlideSpeed: 12
   SlideSpeedChangeRate: 100
   DashCount: 1
-  DashDistance: 10
   DashSpeed: 30
   DashEndSpeed: 15
-  DashTurnSpeed: 0.5
+  DashEndRunLerp: 0
   DashSleepTime: 0.05
   DashAttackTime: 0.045
   DashEndTime: 0.15
