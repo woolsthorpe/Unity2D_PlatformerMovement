@@ -19,6 +19,7 @@ MonoBehaviour:
   MaxDeccelAmount: 20
   MaxAirAcceleration: 1
   MaxAirDecceleration: 0
+  doConserveMomentum: 1
   JumpHeight: 4.5
   TimeToJumpApex: 0.45
   JumpForce: 20

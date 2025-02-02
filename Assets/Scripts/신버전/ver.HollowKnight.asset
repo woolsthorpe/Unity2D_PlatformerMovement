@@ -19,6 +19,7 @@ MonoBehaviour:
   MaxDeccelAmount: 50
   MaxAirAcceleration: 1
   MaxAirDecceleration: 1
+  doConserveMomentum: 0
   JumpHeight: 6.5
   TimeToJumpApex: 0.5
   JumpForce: 26
@@ -39,11 +40,15 @@ MonoBehaviour:
   CoyoteTime: 0.2
   InputBufferTime: 0.2
   EnableDoubleJump: 1
+  Apply_RefillDoubleJumpOnWall: 1
   SlideSpeed: 12
   SlideAccel: 12
+  Apply_TurnSpriteOnSlide: 1
+  Apply_keepWallSlideOnNoInput: 1
   DashCount: 1
   DashSpeed: 30
   DashEndSpeed: 10
+  Apply_RefillDashOnWall: 1
   DashSleepTime: 0.01
   DashAttackTime: 0.15
   DashEndTime: 0.15

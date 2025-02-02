@@ -9,10 +9,10 @@ public class PlayerDash : MonoBehaviour
 
     
     private float lastPressedDashTime;
-    [SerializeField]private Vector2 lastDashDir;
+    private Vector2 lastDashDir;
    [SerializeField] private int currentDashCount;
     private bool dashRefilling=false;
-    [SerializeField] private bool refillDashOnWall;
+  
     //[SerializeField] private bool noCoolTimeDashReFill;
 
     public void Initialize(PlayerController controller)
@@ -93,7 +93,7 @@ public class PlayerDash : MonoBehaviour
         }
         
         controller.isDashing = false;
-        Debug.Log($"{lastDashDir.normalized * data.DashSpeed}  {controller.Rigid.velocity}   {controller.Rigid.gravityScale}");
+       // Debug.Log($"{lastDashDir.normalized * data.DashSpeed}  {controller.Rigid.velocity}   {controller.Rigid.gravityScale}");
     }
 
     private void UpdateDashTimers()
@@ -119,7 +119,7 @@ public class PlayerDash : MonoBehaviour
 
     private bool CheckDashRefill()
     {
-        return (controller.IsOnGround() || (refillDashOnWall && controller.IsOnWall()));
+        return (controller.IsOnGround() || (data.Apply_RefillDashOnWall && controller.IsOnWall()));
     }
 
     private IEnumerator RefillDash(float time)

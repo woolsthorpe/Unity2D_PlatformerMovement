@@ -12,41 +12,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a90bc751b3f7664c9ccaadf2272b616, type: 3}
   m_Name: ver.Basic
   m_EditorClassIdentifier: 
-  MaxSpeed: 9.01
-  RunAcceleration: 0.01
-  RunDecceleration: 0.01
-  MaxAccelAmount: 0.055493895
-  MaxDeccelAmount: 0.055493895
-  MaxAirAcceleration: 3
-  MaxAirDecceleration: 3
-  JumpHeight: 3.5
-  TimeToJumpApex: 0.3
-  JumpForce: 23.333332
+  MaxSpeed: 8
+  RunAcceleration: 8
+  RunDecceleration: 7.51
+  MaxAccelAmount: 50
+  MaxDeccelAmount: 46.937504
+  MaxAirAcceleration: 0.6
+  MaxAirDecceleration: 0.75
+  doConserveMomentum: 0
+  JumpHeight: 5.5
+  TimeToJumpApex: 0.38
+  JumpForce: 28.947367
   FallGravityMultiplier: 1.5
-  FastFallGravityMultiplier: 2
-  MaxFallSpeed: 25
-  MaxFastFallSpeed: 30
-  GravityStrength: -77.77777
-  GravityScale: 7.9284167
-  JumpCutGravityMultiplier: 2
-  JumpHangGravityMultiplier: 0.5
-  JumpHangTimeThreshold: 1
-  JumpHangMaxSpeed: 0
+  FastFallGravityMultiplier: 2.2
+  MaxFallSpeed: 12.5
+  MaxFastFallSpeed: 17
+  GravityStrength: -76.177284
+  GravityScale: 2.5392427
+  JumpCutGravityMultiplier: 2.7
+  JumpHangGravityMultiplier: 1
+  JumpHangTimeThreshold: 0.1
+  JumpHangMaxSpeed: 1.1
   JumpHangAcceleration: 1.1
-  WallJumpForce: {x: 10, y: 20}
-  WallJumpTime: 0.1
+  WallJumpForce: {x: 0, y: 0}
+  WallJumpTime: 0
   WallJumpRunLerp: 0
-  CoyoteTime: 0.15
-  InputBufferTime: 0.15
+  CoyoteTime: 0.1
+  InputBufferTime: 0.1
   EnableDoubleJump: 0
-  SlideSpeed: 12
-  SlideSpeedChangeRate: 100
+  SlideSpeed: 0
+  SlideAccel: 0
   DashCount: 1
-  DashSpeed: 30
-  DashEndSpeed: 15
-  DashEndRunLerp: 0
-  DashSleepTime: 0.05
-  DashAttackTime: 0.045
-  DashEndTime: 0.15
-  DashRefillTime: 0.1
-  DashBufferTime: 0.1
+  DashSpeed: 0
+  DashEndSpeed: 0
+  DashSleepTime: 0
+  DashAttackTime: 0
+  DashEndTime: 0
+  DashRefillTime: 0
+  DashBufferTime: 0.01

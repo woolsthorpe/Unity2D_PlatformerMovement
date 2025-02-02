@@ -10,10 +10,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Options")]
     [SerializeField] private float friction = 0f;
     [SerializeField] private float AirControlFactor = 0.8f;
-    [SerializeField] private bool doConserveMomentum;
     [Header("Current State")]
-    private Vector2 inputDirection;
-    private Vector2 currentVeclocity;
+     private Vector2 inputDirection;
+    private Vector2 currentVelocity;
     public void Initialize(PlayerController controller)
     {
         this.controller = controller;
@@ -56,10 +55,7 @@ public class PlayerMovement : MonoBehaviour
      
 
     }
-    //움직임이 원보노가 미묘하게 차이가 남
-    // 원본은 정지시 velocity가 0으로 초기화 되지만
-    // 현재 버전은 정지시 velocity가 저장됨(움직이지는 않음, 이것때문에 미묘하게 운직이는거 같기도 함)
-    //
+   
     private void HandlePlayerTurning()
     {
         int direction = (int)Mathf.Sign(inputDirection.x);
@@ -76,8 +72,9 @@ public class PlayerMovement : MonoBehaviour
     }
     private void RunWithAcceleration(float lerpAmount)
     {
+        currentVelocity = controller.GetCurrentVelocity();
         float targetSpeed= inputDirection.x * GetMaxSpeed();
-        targetSpeed = Mathf.Lerp(controller.GetCurrentVelocity().x, targetSpeed, lerpAmount);
+        targetSpeed = Mathf.Lerp(currentVelocity.x, targetSpeed, lerpAmount);
         float accelRate;
 
         if (controller.Jump.lastOnGroundTime>0)//지면
@@ -96,20 +93,17 @@ public class PlayerMovement : MonoBehaviour
             accelRate *= data.JumpHangAcceleration;
         }
 
-        if (IsConserveMomentum(targetSpeed))
+        if (DoConserveMomentum(targetSpeed))
             accelRate = 0;
 
-        float speedDif = targetSpeed - controller.GetCurrentVelocity().x;
+        float speedDif = targetSpeed - currentVelocity.x;
         float moveForce = speedDif * accelRate;
 
 
-        if (Mathf.Abs(controller.GetCurrentVelocity().x) < 0.01f && inputDirection.x == 0)//플레이어 정지시 lerp보정으로 인해 생기는 미묘한 움직임을 없애기 위해 사용
-            controller.SetCurrentVelocity(new Vector2(0, controller.GetCurrentVelocity().y));
+        if (Mathf.Abs(currentVelocity.x) < 0.01f && inputDirection.x == 0 && controller.Jump.lastOnGroundTime>0)//플레이어 정지시 lerp보정으로 인해 생기는 미묘한 움직임을 없애기 위해 사용
+            controller.SetCurrentVelocity(new Vector2(0,currentVelocity.y));
         else
             controller.Rigid.AddForce(Vector2.right * moveForce, ForceMode2D.Force);
-
-
-        // controller.SetCurrentVelocity(new Vector2(currentVeclocity.x + (Time.fixedDeltaTime * speedDif * accelRate) / 1, currentVeclocity.y));
     }
 
     private void RunWithoutAcceleration()
@@ -124,11 +118,11 @@ public class PlayerMovement : MonoBehaviour
 
     private bool SlidingToTurnSprite()
     {
-        return controller.Jump.isSliding && controller.Jump.Apply_TurnSpriteOnSlide;
+        return controller.Jump.isSliding && data.Apply_TurnSpriteOnSlide;
     }
-    private bool IsConserveMomentum(float targetSpeed)
+    private bool DoConserveMomentum(float targetSpeed)
     {
-        return doConserveMomentum && Mathf.Abs(currentVeclocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(currentVeclocity.x) == Mathf.Sign(targetSpeed) &&
+        return data.doConserveMomentum && Mathf.Abs(currentVelocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(currentVelocity.x) == Mathf.Sign(targetSpeed) &&
            Mathf.Abs(targetSpeed) > 0.01f && controller.Jump.lastOnGroundTime < 0;
     }
     private float GetMaxSpeed()

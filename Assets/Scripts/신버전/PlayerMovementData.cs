@@ -8,18 +8,15 @@ public class PlayerMovementData : ScriptableObject
 
     [SerializeField,Range(0.01f, 20f)] private float RunAcceleration;
     [SerializeField,Range(0.01f, 20f)] private float RunDecceleration;
-   
+
     [HideInInspector] public float MaxAccelAmount;
     [HideInInspector] public float MaxDeccelAmount;
    
 
     [Range(0f, 3f)] public float MaxAirAcceleration;
     [Range(0f, 3f)] public float MaxAirDecceleration;
-  
-
-  
-
-    [Header("Movement Settings")]
+    public bool doConserveMomentum;
+    [Header("Jump Settings")]
     [Range(2f, 10f)] public float JumpHeight;
     [Range(0.2f, 2f)] public float TimeToJumpApex;
     [HideInInspector] public float JumpForce;
@@ -51,16 +48,20 @@ public class PlayerMovementData : ScriptableObject
     [Range(0.1f, 1f)] public float CoyoteTime;
     [Range(0.1f, 1f)] public float InputBufferTime;
     public bool EnableDoubleJump;
+    public bool Apply_RefillDoubleJumpOnWall;
 
     [Header("Slide Settings")]
     public float SlideSpeed;
     public float SlideAccel;
+    public bool Apply_TurnSpriteOnSlide;
+    public bool Apply_keepWallSlideOnNoInput;
 
     [Header("Dash Settings")]
     [Range(1, 10)] public int DashCount;
     //public float DashDistance;
     public float DashSpeed;
     public float DashEndSpeed;
+    public bool Apply_RefillDashOnWall;
     //[Range(0f, 1f)] public float DashEndRunLerp;
     //[Range(0.1f, 1f)] public float DashTurnSpeed;
 
@@ -80,14 +81,17 @@ public class PlayerMovementData : ScriptableObject
         // Calculate jump force
         JumpForce = Mathf.Abs(GravityStrength) * TimeToJumpApex;
 
-       // RunAcceleration = Mathf.Clamp(RunAcceleration,0.01f,MaxSpeed);
-       // RunDecceleration = Mathf.Clamp(RunDecceleration, 0.01f, MaxSpeed);
+        RunAcceleration = Mathf.Clamp(RunAcceleration,0.01f,MaxSpeed);
+        RunDecceleration = Mathf.Clamp(RunDecceleration, 0.01f, MaxSpeed);
       
 
         //a = ¥Äv / ¥Ät
         MaxAccelAmount = (RunAcceleration / MaxSpeed) / Time.fixedDeltaTime;
         MaxDeccelAmount = (RunDecceleration / MaxSpeed) / Time.fixedDeltaTime;
-      
+
+
+        if (Apply_RefillDoubleJumpOnWall)
+            Apply_RefillDoubleJumpOnWall = EnableDoubleJump;
     }
 
 

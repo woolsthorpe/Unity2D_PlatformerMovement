@@ -410,7 +410,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0
   AirControlFactor: 1
-  doConserveMomentum: 1
 --- !u!114 &6124139767663780421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,13 +422,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f95c24d61b82d024c81ec78c80f98fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <isSliding>k__BackingField: 0
-  slideSpeed: 0
   Apply_WallJump: 1
   Apply_WallSlide: 1
-  <Apply_TurnSpriteOnSlide>k__BackingField: 1
-  Apply_RefillDoubleJumpOnWall: 1
-  Apply_keepWallSlideOnNoInput: 1
 --- !u!114 &7335461189338819838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,9 +436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68043760639c8f84ea0e831412dafce1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lastDashDir: {x: 0, y: 0}
   currentDashCount: 0
-  refillDashOnWall: 1
 --- !u!114 &48921297355863768
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -47,7 +47,7 @@ public class PlayerAnimator : MonoBehaviour
         void Update()
     {
 
-        animator.SetFloat("RunSpeed",Mathf.Clamp(Mathf.Abs(controller.Rigid.velocity.x),0,data.MaxSpeed));
+        animator.SetFloat("RunSpeed",Mathf.Clamp(Mathf.Abs(controller.GetCurrentVelocity().x),0,data.MaxSpeed));
  
         if (Apply_Tilt)
             TiltCharcter();

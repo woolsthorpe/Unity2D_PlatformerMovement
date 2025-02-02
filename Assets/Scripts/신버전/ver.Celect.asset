@@ -19,6 +19,7 @@ MonoBehaviour:
   MaxDeccelAmount: 22.727274
   MaxAirAcceleration: 0.65
   MaxAirDecceleration: 0.65
+  doConserveMomentum: 1
   JumpHeight: 3.5
   TimeToJumpApex: 0.3
   JumpForce: 23.333332
@@ -27,7 +28,7 @@ MonoBehaviour:
   MaxFallSpeed: 25
   MaxFastFallSpeed: 30
   GravityStrength: -77.77777
-  GravityScale: 7.9284167
+  GravityScale: 2.5925925
   JumpCutGravityMultiplier: 2
   JumpHangGravityMultiplier: 0.5
   JumpHangTimeThreshold: 1
@@ -35,11 +36,11 @@ MonoBehaviour:
   JumpHangAcceleration: 1.1
   WallJumpForce: {x: 15, y: 25}
   WallJumpTime: 0.15
-  WallJumpRunLerp: 0.15
+  WallJumpRunLerp: 0.5
   CoyoteTime: 0.1
   InputBufferTime: 0.1
   EnableDoubleJump: 0
-  SlideSpeed: 10
+  SlideSpeed: 0
   SlideAccel: 10
   DashCount: 1
   DashSpeed: 20
