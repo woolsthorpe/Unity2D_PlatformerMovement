@@ -342,7 +342,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Data: {fileID: 11400000, guid: 9b2b5553bf34fc54a919cb09d66abce6, type: 2}
-  <isDashing>k__BackingField: 0
   <playerSprite>k__BackingField: {fileID: 608578154507023002}
 --- !u!50 &3671677587410533583
 Rigidbody2D:

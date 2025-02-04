@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 //using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerJump : MonoBehaviour
 {
@@ -38,18 +39,14 @@ public class PlayerJump : MonoBehaviour
         this.controller = controller;
         this.data = controller.Data;
     }
-
-    public void HandleInput()
+    public void OnJump(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C))
-        {
+        if(context.started)
             lastPressedJumpTime = data.InputBufferTime;
-        }
-        if ((Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.C))&& CanJumpCut())
-        {
+        if(context.canceled)
             isJumpCut = true;
-        }
     }
+
 
     private void Update()
     {
@@ -57,6 +54,7 @@ public class PlayerJump : MonoBehaviour
         JumpCheck();
         SlideCheck();
         CollisionCheck();
+        Timer();
 
         if (lastPressedJumpTime > 0)
         {
@@ -83,8 +81,7 @@ public class PlayerJump : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        //일정한 주기로 시간감소를 하기위해 fixedupdat로 설정
-        Timer();
+      
         if (isSliding)
         {
             Slide();

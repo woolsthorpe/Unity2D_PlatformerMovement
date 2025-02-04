@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public PlayerJump Jump { get; private set; }
     public PlayerDash Dash { get; private set; }
 
-    [field:SerializeField]public bool isDashing { get; set; }
+    public bool isDashing { get; set; }
     public bool isDashAttacking { get; set; }
 
     [field:SerializeField]public GameObject playerSprite { get; set; }
@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        HandlePlayerInput();
+      
 
         if (beForData != Data)
             InitializeComponents();
@@ -57,14 +57,7 @@ public class PlayerController : MonoBehaviour
         beForData = Data;
     }
 
-    private void HandlePlayerInput()
-    {
-        Movement.HandleInput();
-        Jump.HandleInput();
-        if(Dash)
-            Dash.HandleInput();
-
-    }
+   
     public bool IsOnGround() => Contact.IsOnGround();
     public bool IsOnFrontWall() => Contact.IsOnFrontWall();
     public bool IsOnBackWall() => Contact.IsOnBackWall();

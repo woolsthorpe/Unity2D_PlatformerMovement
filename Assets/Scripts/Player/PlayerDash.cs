@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerDash : MonoBehaviour
 {
@@ -23,9 +24,9 @@ public class PlayerDash : MonoBehaviour
         currentDashCount = data.DashCount;
     }
 
-    public void HandleInput()
+    public void OnDash(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift))
+        if(context.performed)
             lastPressedDashTime = data.DashBufferTime;
     }
 
@@ -110,7 +111,7 @@ public class PlayerDash : MonoBehaviour
         float currentTimeScale = Time.timeScale;
         Time.timeScale = 0;
         yield return new WaitForSecondsRealtime(duration);
-        Time.timeScale = (currentTimeScale==0)?1:currentTimeScale;
+        Time.timeScale = currentTimeScale==0 ? 1 : currentTimeScale;
     }
     private bool CanDash()
     {

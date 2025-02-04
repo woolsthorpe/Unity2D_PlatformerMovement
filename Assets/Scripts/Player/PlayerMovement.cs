@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
 
 public class PlayerMovement : MonoBehaviour
@@ -18,10 +19,9 @@ public class PlayerMovement : MonoBehaviour
         this.controller = controller;
         this.data = controller.Data;
     }
-    public void HandleInput()
+    public void OnMovement(InputAction.CallbackContext context)
     {
-        inputDirection.x = Input.GetAxisRaw("Horizontal");
-        inputDirection.y = Input.GetAxisRaw("Vertical");
+        inputDirection = context.ReadValue<Vector2>();
     }
 
     private void Update()
@@ -73,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
     private void RunWithAcceleration(float lerpAmount)
     {
         currentVelocity = controller.GetCurrentVelocity();
+
         float targetSpeed= inputDirection.x * GetMaxSpeed();
         targetSpeed = Mathf.Lerp(currentVelocity.x, targetSpeed, lerpAmount);
         float accelRate;
