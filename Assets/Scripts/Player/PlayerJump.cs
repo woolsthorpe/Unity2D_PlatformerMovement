@@ -43,7 +43,7 @@ public class PlayerJump : MonoBehaviour
     {
         if(context.started)
             lastPressedJumpTime = data.InputBufferTime;
-        if(context.canceled)
+        if(context.canceled && CanJumpCut())
             isJumpCut = true;
     }
 

@@ -10,7 +10,8 @@ public class PlayerAnimator : MonoBehaviour
     private Animator animator;
     [Header("Settings")]
     [SerializeField] private bool Apply_Tilt;
-  
+    private Vector3 orginPos;
+    private Vector3 orginSize;
 
     [Header("Tilt Settings")]
     [SerializeField] private float maxTilt;
@@ -29,7 +30,7 @@ public class PlayerAnimator : MonoBehaviour
     private bool jumpSqueezing;
     private bool landSqueezing;
     private bool isGrounded;
-  
+
     public bool cameraFalling { get; private set; }
 
     [Header(" Particles Settings")]
@@ -42,13 +43,17 @@ public class PlayerAnimator : MonoBehaviour
         this.controller = controller;
         this.data = controller.Data;
 
+        orginSize = controller.playerSprite.transform.localScale;
+        orginPos = controller.playerSprite.transform.localPosition;
+
         animator = GetComponentInChildren<Animator>();
     }
-        void Update()
+    void Update()
     {
 
-        animator.SetFloat("RunSpeed",Mathf.Clamp(Mathf.Abs(controller.GetCurrentVelocity().x),0,data.MaxSpeed));
- 
+        animator.SetFloat("velocity_X", Mathf.Clamp(Mathf.Abs(controller.GetCurrentVelocity().x), 0, data.MaxSpeed));
+        animator.SetFloat("velocity_Y", controller.GetCurrentVelocity().y);
+        animator.SetBool("OnGround", controller.IsOnGround());
         if (Apply_Tilt)
             TiltCharcter();
 
@@ -61,15 +66,15 @@ public class PlayerAnimator : MonoBehaviour
         if (controller.GetInputDirection().x != 0)
             directionToTilt = Mathf.Sign(controller.GetInputDirection().x);
 
-        Vector3 targetRot = new Vector3(0,0,Mathf.Lerp(-maxTilt,maxTilt,Mathf.InverseLerp(-1,1,directionToTilt)));
-        animator.transform.rotation = Quaternion.RotateTowards(animator.transform.rotation,Quaternion.Euler(-targetRot),tiltSpeed*Time.deltaTime);
+        Vector3 targetRot = new Vector3(0, 0, Mathf.Lerp(-maxTilt, maxTilt, Mathf.InverseLerp(-1, 1, directionToTilt)));
+        animator.transform.rotation = Quaternion.RotateTowards(animator.transform.rotation, Quaternion.Euler(-targetRot), tiltSpeed * Time.deltaTime);
 
     }
 
-   
+
     public void CheckForLanding()
     {
-      if(!isGrounded && controller.IsOnGround())
+        if (!isGrounded && controller.IsOnGround()&&!controller.Jump.isJumping)
         {
             cameraFalling = false;
             isGrounded = true;
@@ -84,31 +89,31 @@ public class PlayerAnimator : MonoBehaviour
                 StartCoroutine(JumpSqueeze(landSquashSize.x * landSquashMultiplier, landSquashSize.y / landSquashMultiplier, landSquashTime, landDrop, false));
             }
         }
-      else if(isGrounded && !controller.IsOnGround())
+        else if (isGrounded && !controller.IsOnGround())
         {
             isGrounded = false;
             moveParticle.Stop();
         }
 
-       
-           
+
+
     }
     public void JumpEffect()
     {
-        animator.SetBool("OnGround",false);
+        animator.SetBool("OnGround", false);
         animator.SetTrigger("Jump");
         isGrounded = false;
 
         if (!jumpSqueezing && jumpSquashMultiplier >= 1)
-            StartCoroutine(JumpSqueeze(jumpSquashSize.x*jumpSquashMultiplier,jumpSquashSize.y/jumpSquashMultiplier,jumpSquashTime,0,true));
+            StartCoroutine(JumpSqueeze(jumpSquashSize.x * jumpSquashMultiplier, jumpSquashSize.y / jumpSquashMultiplier, jumpSquashTime, 0, true));
 
         jumpParticle.Play();
         moveParticle.Stop();
     }
-   
 
 
-    IEnumerator JumpSqueeze(float xSqueeze,float ySqueeze,float seconds, float dropAmount,bool jumpSqueeze)
+
+    IEnumerator JumpSqueeze(float xSqueeze, float ySqueeze, float seconds, float dropAmount, bool jumpSqueeze)
     {
         if (jumpSqueeze)
             jumpSqueezing = true;
@@ -117,25 +122,22 @@ public class PlayerAnimator : MonoBehaviour
 
         squeezing = true;
 
-        Vector3 orginSize = Vector3.one;
-        Vector3 newSize = new Vector3(xSqueeze,ySqueeze,orginSize.z);
-
-        Vector3 orginPos = Vector3.zero;
-        Vector3 newPos = new Vector3(0, -dropAmount, 0);
+        Vector3 newSize = new Vector3(xSqueeze, ySqueeze, orginSize.z);
+        Vector3 newPos = orginPos + new Vector3(0, -dropAmount, 0);
 
         float currentTime = 0f;
-        while(currentTime<=1.0f)
+        while (currentTime <= 1.0f)
         {
             currentTime += Time.deltaTime / 0.01f;
-            controller.playerSprite.transform.localScale = Vector3.Lerp(orginSize,newSize,currentTime);
+            controller.playerSprite.transform.localScale = Vector3.Lerp(orginSize, newSize, currentTime);
             controller.playerSprite.transform.localPosition = Vector3.Lerp(orginPos, newPos, currentTime);
-           yield return null;
+            yield return null;
         }
         controller.playerSprite.transform.localScale = newSize;
         controller.playerSprite.transform.localPosition = newPos;
 
-      currentTime = 0f;
-        while(currentTime<=seconds)
+        currentTime = 0f;
+        while (currentTime <= seconds)
         {
             currentTime += Time.deltaTime / seconds;
             controller.playerSprite.transform.localScale = Vector3.Lerp(newSize, orginSize, currentTime);
