@@ -21,6 +21,12 @@ public class PlayerMovement : MonoBehaviour
     }
     public void OnMovement(InputAction.CallbackContext context)
     {
+        if(controller.iskeyLocked)
+        {
+            inputDirection = Vector2.zero;
+            return;
+        }
+
         inputDirection = context.ReadValue<Vector2>();
     }
 

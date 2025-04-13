@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -15,17 +16,18 @@ public class PlayerController : MonoBehaviour
     public bool isDashing { get; set; }
     public bool isDashAttacking { get; set; }
 
+    public bool iskeyLocked { get;  private set; }
+
     [field:SerializeField]public GameObject playerSprite { get; set; }
     private void Awake()
     {
         InitializeComponents();
-       // playerSprite = GetComponentInChildren<GameObject>();
-    }
 
+        if (playerSprite == null)
+            Debug.LogError("playerSprite is None");
+    }
     private void Update()
     {
-      
-
         if (beForData != Data)
             InitializeComponents();
         //테스트 할때만 남겨두고 작업마무리할시 삭제
@@ -85,6 +87,10 @@ public class PlayerController : MonoBehaviour
     public void OnJumpEffect()
     {
         AnimHandler.JumpEffect();
+    }
+    public void OnWallJumpEffect()
+    {
+        AnimHandler.WallJumpEffect();
     }
     public void OnLandingEffect()
     {

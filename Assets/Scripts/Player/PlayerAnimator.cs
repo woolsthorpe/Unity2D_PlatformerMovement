@@ -37,7 +37,7 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private ParticleSystem moveParticle;
     [SerializeField] private ParticleSystem jumpParticle;
     [SerializeField] private ParticleSystem landParticle;
-
+    [SerializeField] private ParticleSystem slidingParticle;
     public void Initialize(PlayerController controller)
     {
         this.controller = controller;
@@ -59,6 +59,8 @@ public class PlayerAnimator : MonoBehaviour
 
         CheckForLanding();
 
+        if(slidingParticle != null)
+            CheckForSliding();
     }
     private void TiltCharcter()
     {
@@ -72,7 +74,7 @@ public class PlayerAnimator : MonoBehaviour
     }
 
 
-    public void CheckForLanding()
+    private void CheckForLanding()
     {
         if (!isGrounded && controller.IsOnGround()&&!controller.Jump.isJumping)
         {
@@ -94,11 +96,30 @@ public class PlayerAnimator : MonoBehaviour
             isGrounded = false;
             moveParticle.Stop();
         }
+    }
 
+    private void CheckForSliding()
+    {
+        bool isSliding = controller.Jump.isSliding;
 
+        if (isSliding && slidingParticle.isStopped)
+            slidingParticle.Play();
+        else if (!isSliding)
+            slidingParticle.Stop();
 
+        animator.SetBool("Sliding", isSliding);
     }
     public void JumpEffect()
+    {
+        jumpParticle.Play();
+        PlayJumpSequence();
+    }
+    public void WallJumpEffect()
+    {
+        //벽점프 이펙트 할당
+        PlayJumpSequence();
+    }
+    private void PlayJumpSequence()
     {
         animator.SetBool("OnGround", false);
         animator.SetTrigger("Jump");
@@ -107,10 +128,8 @@ public class PlayerAnimator : MonoBehaviour
         if (!jumpSqueezing && jumpSquashMultiplier >= 1)
             StartCoroutine(JumpSqueeze(jumpSquashSize.x * jumpSquashMultiplier, jumpSquashSize.y / jumpSquashMultiplier, jumpSquashTime, 0, true));
 
-        jumpParticle.Play();
         moveParticle.Stop();
     }
-
 
 
     IEnumerator JumpSqueeze(float xSqueeze, float ySqueeze, float seconds, float dropAmount, bool jumpSqueeze)

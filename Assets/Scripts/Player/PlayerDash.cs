@@ -26,6 +26,9 @@ public class PlayerDash : MonoBehaviour
 
     public void OnDash(InputAction.CallbackContext context)
     {
+        if (controller.iskeyLocked)
+            return;
+
         if(context.performed)
             lastPressedDashTime = data.DashBufferTime;
     }

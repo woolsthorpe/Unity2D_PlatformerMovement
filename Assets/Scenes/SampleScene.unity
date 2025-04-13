@@ -5295,10 +5295,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Character
       objectReference: {fileID: 0}
-    - target: {fileID: 5301896551582000692, guid: bde06a5c906167b4f821023b1e69bfbc, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6771589517923598048, guid: bde06a5c906167b4f821023b1e69bfbc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5340,10 +5336,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 1232584750445051445, guid: bde06a5c906167b4f821023b1e69bfbc, type: 3}
-    - {fileID: 5357181139961098328, guid: bde06a5c906167b4f821023b1e69bfbc, type: 3}
-    - {fileID: 2586385916129835065, guid: bde06a5c906167b4f821023b1e69bfbc, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bde06a5c906167b4f821023b1e69bfbc, type: 3}

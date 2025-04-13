@@ -41,6 +41,9 @@ public class PlayerJump : MonoBehaviour
     }
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (controller.iskeyLocked)
+            return;
+
         if(context.started)
             lastPressedJumpTime = data.InputBufferTime;
         if(context.canceled && CanJumpCut())
@@ -193,6 +196,8 @@ public class PlayerJump : MonoBehaviour
     }
     private void WallJump(int dir)
     {
+        controller.OnWallJumpEffect();
+
         canJumpAgain = data.Apply_RefillDoubleJumpOnWall && data.EnableDoubleJump;
         isWallJumping = true;
         isJumping = false;
